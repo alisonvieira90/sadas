@@ -1,45 +1,42 @@
--- by nome698 for lsar
+-- by nome-- by nome698 for lsar
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
+local teleportButton = Instance.new("TextButton")
 
--- Criar GUI
-local gui = Instance.new("ScreenGui")
-gui.Parent = player:WaitForChild("PlayerGui")
+-- Configurando o botão
+teleportButton.Size = UDim2.new(0, 200, 0, 50)
+teleportButton.Position = UDim2.new(0.5, -100, 0.8, 0)
+teleportButton.Text = "Teleportar para o Away"
+teleportButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+teleportButton.Font = Enum.Font.SourceSansBold
+teleportButton.TextSize = 20
+teleportButton.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ScreenGui", 1) or Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 
-local button = Instance.new("TextButton")
-button.Size = UDim2.new(0, 200, 0, 50)
-button.Position = UDim2.new(0.5, -100, 0.8, 0)
-button.Text = "Ativar AutoClick"
-button.Parent = gui
-button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-button.TextColor3 = Color3.fromRGB(255, 255, 255)
-button.Font = Enum.Font.SourceSansBold
-button.TextSize = 20
+-- Criar ScreenGui se não existir
+if not teleportButton.Parent:IsA("ScreenGui") then
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "TeleportGui"
+    screenGui.Parent = player:WaitForChild("PlayerGui")
+    teleportButton.Parent = screenGui
+end
 
-local active = false -- Se o AutoClick está ativado
-local mouse = player:GetMouse()
-
--- Quando o jogador clica no botão, ativa/desativa
-button.Activated:Connect(function()
-	active = not active -- Alterna entre ativado e desativado
+-- Função para teleporte
+teleportButton.MouseButton1Click:Connect(function()
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 	
-	if active then
-		button.Text = "AutoClick Ativado"
-		button.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+	local goalsFolder = workspace:FindFirstChild("Goals")
+	if goalsFolder then
+		local awayPart = goalsFolder:FindFirstChild("Away")
+		if awayPart and awayPart:IsA("BasePart") then
+			humanoidRootPart.CFrame = awayPart.CFrame + Vector3.new(0, 3, 0) -- Teleporta um pouco acima da parte
+		else
+			warn("A parte 'Away' não foi encontrada ou não é uma BasePart.")
+		end
 	else
-		button.Text = "Ativar AutoClick"
-		button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-	end
-end)
-
--- Loop para clicar automaticamente no meio da tela enquanto estiver ativado
-RunService.RenderStepped:Connect(function()
-	if active then
-		mouse.Button1Down:Fire() -- Simula um clique
-		task.wait(0.03) -- Tempo entre os cliques (ajuste para mais rápido ou mais lento)
+		warn("O Folder 'Goals' não foi encontrado no Workspace.")
 	end
 end)
 

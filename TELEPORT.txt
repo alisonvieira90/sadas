@@ -3,23 +3,50 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
 
+-- Criar GUI
+local gui = Instance.new("ScreenGui")
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(0, 200, 0, 50)
+button.Position = UDim2.new(0.5, -100, 0.8, 0)
+button.Text = "Ativar AutoClick"
+button.Parent = gui
+button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.Font = Enum.Font.SourceSansBold
+button.TextSize = 20
+
+local clicking = false -- Se está clicando ou não
+local active = false -- Se o botão foi ativado ou não
 local mouse = player:GetMouse()
-local clicking = false -- Variável para controlar o loop
 
--- Quando o player começar a tocar na tela
-UserInputService.TouchStarted:Connect(function()
-	clicking = true
+-- Quando o jogador clica no botão, ativa/desativa
+button.Activated:Connect(function()
+	active = not active -- Alterna entre ativado e desativado
 	
-	-- Inicia um loop enquanto estiver segurando
-	while clicking do
-		mouse.Button1Down:Fire() -- Simula um clique
-		task.wait(0.03) -- Tempo entre os cliques (mais baixo = mais rápido)
+	if active then
+		button.Text = "AutoClick Ativado"
+		button.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+	else
+		button.Text = "Ativar AutoClick"
+		button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 	end
 end)
 
--- Quando o player soltar a tela
+-- Quando o jogador segura a tela e o botão está ativado, começa a clicar rápido
+UserInputService.TouchStarted:Connect(function()
+	if active then
+		clicking = true
+		while clicking do
+			mouse.Button1Down:Fire() -- Simula um clique
+			task.wait(0.03) -- Tempo entre os cliques (mais rápido ou mais lento)
+		end
+	end
+end)
+
+-- Quando o jogador solta a tela, para de clicar
 UserInputService.TouchEnded:Connect(function()
 	clicking = false
 end)

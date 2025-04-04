@@ -3,33 +3,43 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
-player.CharacterAdded:Wait()
-local char = player.Character or player.CharacterAdded:Wait()
-local hrp = char:WaitForChild("HumanoidRootPart")
+-- Esperar o personagem carregar
+local function getHRP()
+	local char = player.Character or player.CharacterAdded:Wait()
+	return char:WaitForChild("HumanoidRootPart")
+end
+
+local hrp = getHRP()
 
 -- Criar GUI
 local gui = Instance.new("ScreenGui")
-gui.ResetOnSpawn = false
 gui.Name = "TeleportGui"
+gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
+-- Criar Botão
 local button = Instance.new("TextButton")
+button.Name = "TPButton"
 button.Size = UDim2.new(0, 200, 0, 50)
-button.Position = UDim2.new(0.5, -100, 0.8, 0)
+button.Position = UDim2.new(0.5, -100, 0.9, 0)
+button.BackgroundColor3 = Color3.fromRGB(50, 50, 255)
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.Font = Enum.Font.SourceSansBold
+button.TextSize = 24
 button.Text = "Teleportar pra TPS"
 button.Parent = gui
 
--- TELEPORTE
+-- Clique = teleportar
 button.Activated:Connect(function()
-	local Balls = workspace:FindFirstChild("Balls")
-	if Balls then
-		local TPS = Balls:FindFirstChild("TPS")
+	local folder = workspace:FindFirstChild("Balls")
+	if folder then
+		local TPS = folder:FindFirstChild("TPS")
 		if TPS then
 			hrp.CFrame = TPS.CFrame + Vector3.new(0, 5, 0)
 		else
-			warn("A parte 'TPS' não foi encontrada dentro de 'Balls'")
+			warn("TPS não encontrado dentro de Balls.")
 		end
 	else
-		warn("O folder 'Balls' não foi encontrado no Workspace!")
+		warn("Folder 'Balls' não encontrado no Workspace.")
 	end
 end)

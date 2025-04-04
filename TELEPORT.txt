@@ -2,35 +2,58 @@
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- Esperar o personagem carregar
-local function getHRP()
-	local char = player.Character or player.CharacterAdded:Wait()
-	return char:WaitForChild("HumanoidRootPart")
-end
-
-local hrp = getHRP()
-
+-- Criar GUI
 local gui = Instance.new("ScreenGui")
 gui.Parent = player:WaitForChild("PlayerGui")
 
 local button = Instance.new("TextButton")
 button.Size = UDim2.new(0, 200, 0, 50)
 button.Position = UDim2.new(0.5, -100, 0.8, 0)
-button.Text = "Teleportar pra TPS"
+button.Text = "Ativar Hack 😈"
 button.Parent = gui
+button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.Font = Enum.Font.SourceSansBold
+button.TextSize = 20
 
--- Clique = teleportar
+-- Função de ativação
 button.Activated:Connect(function()
-	local folder = workspace:FindFirstChild("Balls")
-	if folder then
-		local TPS = folder:FindFirstChild("TPS")
-		if TPS then
-			hrp.CFrame = TPS.CFrame + Vector3.new(0, 5, 0)
-		else
-			warn("TPS não encontrado dentro de Balls.")
-		end
+	-- Equipa a RocketLauncher
+	local backpack = player:FindFirstChild("Backpack")
+	local tool = backpack and backpack:FindFirstChild("RocketLauncher")
+
+	if tool then
+		tool.Parent = player.Character
 	else
-		warn("Folder 'Balls' não encontrado no Workspace.")
+		warn("RocketLauncher não encontrada na mochila!")
+		return
+	end
+
+	-- Teleporta para um dos SpawnLocations
+	local spawns = game:GetService("Workspace"):GetChildren()
+	local spawnPoints = {}
+
+	for _, obj in pairs(spawns) do
+		if obj:IsA("SpawnLocation") then
+			table.insert(spawnPoints, obj)
+		end
+	end
+
+	if #spawnPoints > 0 then
+		local randomSpawn = spawnPoints[math.random(1, #spawnPoints)]
+		local char = player.Character or player.CharacterAdded:Wait()
+		local hrp = char:FindFirstChild("HumanoidRootPart")
+		if hrp then
+			hrp.CFrame = randomSpawn.CFrame + Vector3.new(0, 5, 0)
+		end
+	end
+
+	-- Auto-clicando para atirar
+	local mouse = player:GetMouse()
+	while tool.Parent == player.Character do
+		task.wait(0.5) -- Ajuste o tempo entre os tiros
+		mouse.Button1Down:Fire()
 	end
 end)

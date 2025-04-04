@@ -11,21 +11,12 @@ end
 
 local hrp = getHRP()
 
--- Criar GUI
 local gui = Instance.new("ScreenGui")
-gui.Name = "TeleportGui"
-gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- Criar Botão
 local button = Instance.new("TextButton")
-button.Name = "TPButton"
 button.Size = UDim2.new(0, 200, 0, 50)
-button.Position = UDim2.new(0.5, -100, 0.9, 0)
-button.BackgroundColor3 = Color3.fromRGB(50, 50, 255)
-button.TextColor3 = Color3.fromRGB(255, 255, 255)
-button.Font = Enum.Font.SourceSansBold
-button.TextSize = 24
+button.Position = UDim2.new(0.5, -100, 0.8, 0)
 button.Text = "Teleportar pra TPS"
 button.Parent = gui
 

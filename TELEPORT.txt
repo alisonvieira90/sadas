@@ -2,54 +2,25 @@
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
 
--- Criar GUI
-local gui = Instance.new("ScreenGui")
-gui.Parent = player:WaitForChild("PlayerGui")
+local mouse = player:GetMouse()
+local clicking = false -- Variável pra controlar o loop
 
-local button = Instance.new("TextButton")
-button.Size = UDim2.new(0, 200, 0, 50)
-button.Position = UDim2.new(0.5, -100, 0.8, 0)
-button.Text = "Ativar Hack 😈"
-button.Parent = gui
-button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-button.TextColor3 = Color3.fromRGB(255, 255, 255)
-button.Font = Enum.Font.SourceSansBold
-button.TextSize = 20
-
--- Função de ativação
-button.Activated:Connect(function()
-	-- Equipa a RocketLauncher
-	local backpack = player:FindFirstChild("Backpack")
-	local tool = backpack and backpack:FindFirstChild("RocketLauncher")
-
-	if tool then
-		tool.Parent = player.Character
-	else
-		warn("RocketLauncher não encontrada na mochila!")
-		return
-	end
-
-	-- Teleporta para um Spawn aleatório
-	local spawnPoints = {}
-	for _, obj in ipairs(workspace:GetChildren()) do
-		if obj:IsA("SpawnLocation") then
-			table.insert(spawnPoints, obj)
+-- Quando o player pressionar a tela
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if not gameProcessed and input.UserInputType == Enum.UserInputType.Touch then
+		clicking = true
+		while clicking do
+			mouse.Button1Down:Fire() -- Dispara o clique
+			task.wait(0.05) -- Ajuste para clicar mais rápido ou mais devagar
 		end
 	end
+end)
 
-	if #spawnPoints > 0 then
-		local spawn = spawnPoints[math.random(1, #spawnPoints)]
-		local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-		if hrp then
-			hrp.CFrame = spawn.CFrame + Vector3.new(0, 5, 0)
-		end
-	end
-
-	-- Simula clique automaticamente
-	local mouse = player:GetMouse()
-	while tool.Parent == player.Character do
-		task.wait(0.5) -- Ajusta a frequência de tiro
-		mouse.Button1Down:Fire()
+-- Quando o player soltar a tela
+UserInputService.InputEnded:Connect(function(input, gameProcessed)
+	if input.UserInputType == Enum.UserInputType.Touch then
+		clicking = false
 	end
 end)

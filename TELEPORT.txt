@@ -2,7 +2,6 @@
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- Criar GUI
 local gui = Instance.new("ScreenGui")
@@ -31,29 +30,26 @@ button.Activated:Connect(function()
 		return
 	end
 
-	-- Teleporta para um dos SpawnLocations
-	local spawns = game:GetService("Workspace"):GetChildren()
+	-- Teleporta para um Spawn aleatório
 	local spawnPoints = {}
-
-	for _, obj in pairs(spawns) do
+	for _, obj in ipairs(workspace:GetChildren()) do
 		if obj:IsA("SpawnLocation") then
 			table.insert(spawnPoints, obj)
 		end
 	end
 
 	if #spawnPoints > 0 then
-		local randomSpawn = spawnPoints[math.random(1, #spawnPoints)]
-		local char = player.Character or player.CharacterAdded:Wait()
-		local hrp = char:FindFirstChild("HumanoidRootPart")
+		local spawn = spawnPoints[math.random(1, #spawnPoints)]
+		local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
 		if hrp then
-			hrp.CFrame = randomSpawn.CFrame + Vector3.new(0, 5, 0)
+			hrp.CFrame = spawn.CFrame + Vector3.new(0, 5, 0)
 		end
 	end
 
-	-- Auto-clicando para atirar
+	-- Simula clique automaticamente
 	local mouse = player:GetMouse()
 	while tool.Parent == player.Character do
-		task.wait(0.5) -- Ajuste o tempo entre os tiros
+		task.wait(0.5) -- Ajusta a frequência de tiro
 		mouse.Button1Down:Fire()
 	end
 end)

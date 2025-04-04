@@ -3,24 +3,23 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 local mouse = player:GetMouse()
-local clicking = false -- Variável pra controlar o loop
+local clicking = false -- Variável para controlar o loop
 
--- Quando o player pressionar a tela
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-	if not gameProcessed and input.UserInputType == Enum.UserInputType.Touch then
-		clicking = true
-		while clicking do
-			mouse.Button1Down:Fire() -- Dispara o clique
-			task.wait(0.05) -- Ajuste para clicar mais rápido ou mais devagar
-		end
+-- Quando o player começar a tocar na tela
+UserInputService.TouchStarted:Connect(function()
+	clicking = true
+	
+	-- Inicia um loop enquanto estiver segurando
+	while clicking do
+		mouse.Button1Down:Fire() -- Simula um clique
+		task.wait(0.03) -- Tempo entre os cliques (mais baixo = mais rápido)
 	end
 end)
 
 -- Quando o player soltar a tela
-UserInputService.InputEnded:Connect(function(input, gameProcessed)
-	if input.UserInputType == Enum.UserInputType.Touch then
-		clicking = false
-	end
+UserInputService.TouchEnded:Connect(function()
+	clicking = false
 end)

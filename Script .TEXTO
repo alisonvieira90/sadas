@@ -3,6 +3,7 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 -- Criar GUI
 local gui = Instance.new("ScreenGui")
@@ -18,8 +19,7 @@ button.TextColor3 = Color3.fromRGB(255, 255, 255)
 button.Font = Enum.Font.SourceSansBold
 button.TextSize = 20
 
-local clicking = false -- Se está clicando ou não
-local active = false -- Se o botão foi ativado ou não
+local active = false -- Se o AutoClick está ativado
 local mouse = player:GetMouse()
 
 -- Quando o jogador clica no botão, ativa/desativa
@@ -35,18 +35,11 @@ button.Activated:Connect(function()
 	end
 end)
 
--- Quando o jogador segura a tela e o botão está ativado, começa a clicar rápido
-UserInputService.TouchStarted:Connect(function()
+-- Loop para clicar automaticamente no meio da tela enquanto estiver ativado
+RunService.RenderStepped:Connect(function()
 	if active then
-		clicking = true
-		while clicking do
-			mouse.Button1Down:Fire() -- Simula um clique
-			task.wait(0.03) -- Tempo entre os cliques (mais rápido ou mais lento)
-		end
+		mouse.Button1Down:Fire() -- Simula um clique
+		task.wait(0.03) -- Tempo entre os cliques (ajuste para mais rápido ou mais lento)
 	end
 end)
 
--- Quando o jogador solta a tela, para de clicar
-UserInputService.TouchEnded:Connect(function()
-	clicking = false
-end)
